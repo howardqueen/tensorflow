@@ -1,9 +1,46 @@
+from lib import strMatrix
 import numpy as np
 import tensorflow as tf
 
-def knn_train():
+def main():
+    from tensorflow.examples.tutorials.mnist import input_data
+    mnist = input_data.read_data_sets("E:/AIML/data/", one_hot=True)
+    #mnist = input_data.read_data_sets("/mnt/win10/data/AIML/data", one_hot=True)
 
-    print('---------------')
+    #Xtrain, Ytrain = mnist.train.next_batch(500)  #从数据集中选取5000个样本作为训练集
+    Xtest, Ytest = mnist.test.next_batch(20)    #从数据集中选取200个样本作为测试集
+    print(strMatrix(Xtest, '', 28, lambda x: 1 if x > 0 else 0));
+    return;
+    knn_train();
+
+def knn_train():
+    print('========================')
+    print("= K近邻 - 图片数字识别 =")
+    print('========================')    
+    Xtrain, Ytrain, Xtest, Ytest = loadData();
+    #knn_test(Xtrain, Ytrain, Xtest, Ytest, 2)
+    #return
+    
+    knn = 0.
+    max_accuracy = -1
+    for k in range(3):
+        print('---------------')
+        print("训练 K = ", k + 1, "...");
+        print()
+        accuracy = knn_test(Xtrain, Ytrain, Xtest, Ytest, k + 1)
+        print()
+        print("完成，准确率", round(accuracy * 100,2), "%")
+        if(accuracy > max_accuracy):
+            knn = k + 1;
+            max_accuracy = accuracy;
+    print();
+    print('================')
+    print('K =', knn, '时准确率(', round(max_accuracy * 100, 2), '%)最高!');
+    print('================')
+    
+    return
+    
+def loadData():
     print("数据准备...")
     #print('---------------')
     #这里使用TensorFlow自带的数据集作为测试，以下是导入数据集代码
@@ -14,35 +51,31 @@ def knn_train():
     Xtrain, Ytrain = mnist.train.next_batch(500)  #从数据集中选取5000个样本作为训练集
     Xtest, Ytest = mnist.test.next_batch(20)    #从数据集中选取200个样本作为测试集
     
-    #knn_test(Xtrain, Ytrain, Xtest, Ytest, 2)
-    #return
-    
     print('---------------')
-    print('训练数据 Xtrain:', len(Xtrain), "x", len(Xtrain[0]))
+    print('训练数据, Xtrain:', len(Xtrain), "x", len(Xtrain[0]))
+    print('每张图片 784（28x28）个像素点, 比如: ')
+    #print(Xtrain[0],end='');
+    for i in range(2):
+        print('\t[ 图片', i, ']')
+        for x in range(28):
+            for y in range(28):
+                print(1 if Xtrain[i][x*28+y] > 0 else 0, end='');
+            print();
     #print(Xtrain)
-    #print('---------------')
-    print('训练标签 Ytrain:', len(Ytrain), "x", len(Ytrain[0]))
-    #print("[", Ytrain[0])
+    print('---------------')
+    print('训练标签, Ytrain:', len(Ytrain), "x", len(Ytrain[0]))
+    print('共计 10 个分类, 对应 0-9，比如：');
+    print('图片0 的标签是', np.argmax(Ytrain[0]), ', 标量是', Ytrain[0]);
+    print('图片1 的标签是', np.argmax(Ytrain[1]), ', 标量是', Ytrain[1]);
     #print(Ytrain[1])
     #print("...")
     #print("]")
-    #print('---------------')
+    print('---------------')
     print('测试数据 Xtest:', len(Xtest), "x", len(Xtest[0]))
-    #print(Xtest)
     #print('---------------')
     print('测试标签 Ytest:', len(Ytest), "x", len(Ytest[0]))
-    #print(Ytest)
+    return Xtrain, Ytrain, Xtest, Ytest;
     
-    for k in range(5):
-        print('---------------')
-        print("训练 K = ", k+1, "...");
-        print()
-        accuracy = knn_test(Xtrain, Ytrain, Xtest, Ytest, k+1)
-        print()
-        print("完成，准确率", accuracy * 100, "%")
-        
-    return
-
 def knn_test(Xtrain, Ytrain, Xtest, Ytest, k):
     
     # 占位符变量
@@ -75,6 +108,7 @@ def knn_test(Xtrain, Ytrain, Xtest, Ytest, k):
                 # 获取当前样本的最近邻索引
                 nn_index = sess.run(tf.argmin(distance, 0), feed_dict={xtr: Xtrain, xte: Xtest[i, :]})#向占位符传入训练数据
                 ytrmax = np.argmax(Ytrain[nn_index]) # 找出最近邻的标签索引号
+                
                 ytemax = np.argmax(Ytest[i]) # 找出实际的标签索引号
                 # 最近邻标签索引与真实标签索引比较
                 if ytrmax == ytemax: # 相等则命中
@@ -109,6 +143,7 @@ def knn_test(Xtrain, Ytrain, Xtest, Ytest, k):
                 if nn_index < 0:
                     print("WTF")
                     return
+                    
                 ytemax = np.argmax(Ytest[i]) # 找出实际的标签索引号
                 # 最近邻标签索引与真实标签索引比较
                 if ytrmax == ytemax: # 相等则命中
@@ -123,4 +158,4 @@ def knn_test(Xtrain, Ytrain, Xtest, Ytest, k):
 
     return accuracy
 
-knn_train()
+main()
