@@ -21,7 +21,6 @@ from sklearn import datasets
 from tensorflow.python.framework import ops
 
 def main():
-    loadData();
     lsvm();
     
 def lsvm():
@@ -145,18 +144,25 @@ def train(x_vals, y_vals):
         for i in range(500):
             debug = True if (i + 1) % 100 == 0 else False;
             if debug:
-                print("STEP ",i + 1);
+                print("#",i + 1);
             rand_index = np.random.choice(len(x_vals_train), size=batch_size)
             rand_x = x_vals_train[rand_index]
             rand_y = np.transpose([y_vals_train[rand_index]])
             sess.run(train_step, feed_dict={x_data: rand_x, y_target: rand_y})
             if debug:
+                print('--- rand index ---');
                 printMartrix(rand_index);
+                print('--- rand x ---');
                 printMartrix(rand_x);
+                print('--- rand y ---');
                 printMartrix(rand_y);
                 print();
             
             temp_loss = sess.run(loss, feed_dict={x_data: rand_x, y_target: rand_y})
+            if debug:
+                print('--- temp loss ---');
+                printMartrix(temp_loss);
+                print();
             loss_vec.append(temp_loss)
 
             train_acc_temp = sess.run(accuracy, feed_dict={
@@ -169,6 +175,7 @@ def train(x_vals, y_vals):
                 y_target: np.transpose([y_vals_test])})
             test_accuracy.append(test_acc_temp)
 
+            '''
             if debug:
                 a = sess.run(A);
                 print('Step #{} A=[{},{}], b = {}, Loss={}'.format(
@@ -178,6 +185,7 @@ def train(x_vals, y_vals):
                     str(sess.run(b)),
                     str(temp_loss)
                 ))
+            '''
 
         # 抽取系数
         # 分割x_vals为山鸢尾花（I.setosa）和非山鸢尾花（non-I.setosa）
