@@ -1,16 +1,8 @@
-from lib import strMatrix
+from lib import printMartrix
 import numpy as np
 import tensorflow as tf
 
 def main():
-    from tensorflow.examples.tutorials.mnist import input_data
-    mnist = input_data.read_data_sets("E:/AIML/data/", one_hot=True)
-    #mnist = input_data.read_data_sets("/mnt/win10/data/AIML/data", one_hot=True)
-
-    #Xtrain, Ytrain = mnist.train.next_batch(500)  #从数据集中选取5000个样本作为训练集
-    Xtest, Ytest = mnist.test.next_batch(20)    #从数据集中选取200个样本作为测试集
-    print(strMatrix(Xtest, '', 28, lambda x: 1 if x > 0 else 0));
-    return;
     knn_train();
 
 def knn_train():
@@ -18,8 +10,6 @@ def knn_train():
     print("= K近邻 - 图片数字识别 =")
     print('========================')    
     Xtrain, Ytrain, Xtest, Ytest = loadData();
-    #knn_test(Xtrain, Ytrain, Xtest, Ytest, 2)
-    #return
     
     knn = 0.
     max_accuracy = -1
@@ -42,7 +32,6 @@ def knn_train():
     
 def loadData():
     print("数据准备...")
-    #print('---------------')
     #这里使用TensorFlow自带的数据集作为测试，以下是导入数据集代码
     from tensorflow.examples.tutorials.mnist import input_data
     mnist = input_data.read_data_sets("E:/AIML/data/", one_hot=True)
@@ -52,28 +41,17 @@ def loadData():
     Xtest, Ytest = mnist.test.next_batch(20)    #从数据集中选取200个样本作为测试集
     
     print('---------------')
-    print('训练数据, Xtrain:', len(Xtrain), "x", len(Xtrain[0]))
-    print('每张图片 784（28x28）个像素点, 比如: ')
-    #print(Xtrain[0],end='');
-    for i in range(2):
-        print('\t[ 图片', i, ']')
-        for x in range(28):
-            for y in range(28):
-                print(1 if Xtrain[i][x*28+y] > 0 else 0, end='');
-            print();
-    #print(Xtrain)
+    print('训练数据 Xtrain, 每张图片 784（28x28）个像素点:')
+    printMartrix(Xtrain, '', 28, lambda x: 1 if x > 0 else 0);
     print('---------------')
-    print('训练标签, Ytrain:', len(Ytrain), "x", len(Ytrain[0]))
-    print('共计 10 个分类, 对应 0-9，比如：');
-    print('图片0 的标签是', np.argmax(Ytrain[0]), ', 标量是', Ytrain[0]);
-    print('图片1 的标签是', np.argmax(Ytrain[1]), ', 标量是', Ytrain[1]);
-    #print(Ytrain[1])
-    #print("...")
-    #print("]")
+    print('训练分类 Ytrain, 共计 10 个分类, 对应下标 0-9:');
+    printMartrix(Ytrain, lineItems = 0, itemReader = lambda x: 1 if x > 0 else 0);
     print('---------------')
-    print('测试数据 Xtest:', len(Xtest), "x", len(Xtest[0]))
-    #print('---------------')
-    print('测试标签 Ytest:', len(Ytest), "x", len(Ytest[0]))
+    print('测试数据 Xtest:')
+    printMartrix(Xtest, '', 28, lambda x: 1 if x > 0 else 0);
+    print('---------------')
+    print('测试分类 Ytest:')
+    printMartrix(Ytest, lineItems = 0, itemReader = lambda x: 1 if x > 0 else 0);
     return Xtrain, Ytrain, Xtest, Ytest;
     
 def knn_test(Xtrain, Ytrain, Xtest, Ytest, k):

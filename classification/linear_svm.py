@@ -13,7 +13,7 @@
 # We know here that x and y are linearly seperable
 # for I. setosa classification.
 
-from lib import strMatrix
+from lib import printMartrix
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
@@ -22,7 +22,6 @@ from tensorflow.python.framework import ops
 
 def main():
     loadData();
-    return;
     lsvm();
     
 def lsvm():
@@ -43,8 +42,11 @@ def loadData():
     y_vals = np.array([1 if y == 0 else -1 for y in iris.target])
     
     print('---------------')
-    print('山鸢尾花萼特征(长度,宽度)：', strMatrix(x_vals));
-    print('山鸢尾花实际值(是/否)：', strMatrix(y_vals));
+    print('山鸢尾花的花萼特征(长/宽):');
+    printMartrix(x_vals);
+    print('---------------')
+    print('山鸢尾花的实际判别(是:1/否:-1):');
+    printMartrix(y_vals);
     
     return x_vals, y_vals;
 
@@ -149,7 +151,10 @@ def train(x_vals, y_vals):
             rand_y = np.transpose([y_vals_train[rand_index]])
             sess.run(train_step, feed_dict={x_data: rand_x, y_target: rand_y})
             if debug:
-                print("\trand index {}, x {}, y {}".format(rand_index, rand_x, rand_y));
+                printMartrix(rand_index);
+                printMartrix(rand_x);
+                printMartrix(rand_y);
+                print();
             
             temp_loss = sess.run(loss, feed_dict={x_data: rand_x, y_target: rand_y})
             loss_vec.append(temp_loss)
