@@ -28,7 +28,11 @@ def lsvm():
     print("= 线性支持向量机 - 山鸢尾花判别 =")
     print('=================================')
     x, y = loadData();
-    train(x, y);
+    setosa_x, setosa_y, not_setosa_x, not_setosa_y, x1_vals, best_fit, train_accuracy, test_accuracy, loss_vec = train(x, y);
+    drawInit();
+    drawSetosa(setosa_x, setosa_y, not_setosa_x, not_setosa_y, x1_vals, best_fit);
+    drawAccuracy(train_accuracy, test_accuracy);
+    drawLossVector(loss_vec);
 
 def loadData():
     print("数据准备...")
@@ -156,8 +160,6 @@ def train(x_vals, y_vals):
                 printMartrix(rand_x);
                 print('--- rand y ---');
                 printMartrix(rand_y);
-                print();
-            
             temp_loss = sess.run(loss, feed_dict={x_data: rand_x, y_target: rand_y})
             if debug:
                 print('--- temp loss ---');
@@ -207,11 +209,13 @@ def train(x_vals, y_vals):
         setosa_y = [d[0] for i, d in enumerate(x_vals) if y_vals[i] == 1]
         not_setosa_x = [d[1] for i, d in enumerate(x_vals) if y_vals[i] == -1]
         not_setosa_y = [d[0] for i, d in enumerate(x_vals) if y_vals[i] == -1]
+        
+        return setosa_x, setosa_y, not_setosa_x, not_setosa_y, x1_vals, best_fit, train_accuracy, test_accuracy, loss_vec;
 
-def show():
+def drawInit():
     ops.reset_default_graph()
     
-def show1():
+def drawSetosa(setosa_x, setosa_y, not_setosa_x, not_setosa_y, x1_vals, best_fit):
     # Plot data and line
     plt.plot(setosa_x, setosa_y, 'o', label='I. setosa')
     plt.plot(not_setosa_x, not_setosa_y, 'x', label='Non-setosa')
@@ -223,7 +227,7 @@ def show1():
     plt.ylabel('Sepal Length')
     plt.show()
 
-def show2():
+def drawAccuracy(train_accuracy, test_accuracy):
     # Plot train/test accuracies
     plt.plot(train_accuracy, 'k-', label='Training Accuracy')
     plt.plot(test_accuracy, 'r--', label='Test Accuracy')
@@ -233,7 +237,7 @@ def show2():
     plt.legend(loc='lower right')
     plt.show()
 
-def show3():
+def drawLossVector(loss_vec):
     # Plot loss over time
     plt.plot(loss_vec, 'k-')
     plt.title('Loss per Generation')
