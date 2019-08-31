@@ -1,3 +1,15 @@
+import os
+# os.environ["TF_CPP_MIN_LOG_LEVEL"]='1' # 这是默认的显示等级，显示所有信息
+# os.environ["TF_CPP_MIN_LOG_LEVEL"]='2' # 只显示 warning 和 Error
+os.environ["TF_CPP_MIN_LOG_LEVEL"]='3' # 只显示 Error
+import warnings
+warnings.filterwarnings('ignore')
+
+import matplotlib.pyplot as plt
+from tensorflow.python.framework import ops
+
+_LIB_DEBUG = 0;
+
 def test():
     a = [1,2,3,4];
     b = [[1,2,3,4,5,6,7,8,9,0],[1,2,3,4,5,6,7,8,9,0],[1,2,3,4,5,6,7,8,9,0],[1,2,3,4,5,6,7,8,9,0]];
@@ -123,5 +135,11 @@ def isMatrix(martrix):
     if t == "<class 'list'>" or t == "<class 'numpy.ndarray'>":
         return True;
     return False;
-    
-#test();
+
+def resetGraph():
+    ops.reset_default_graph()
+    plt.rcParams['font.sans-serif']=['SimHei']
+    plt.rcParams['axes.unicode_minus'] = False
+
+if _LIB_DEBUG == True:
+    test();
